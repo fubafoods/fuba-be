@@ -1,7 +1,7 @@
 {
   "name": "functions",
   "scripts": {
-        "build": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
     "build:watch": "tsc --watch",
     "dev": "nodemon ./index.ts",
     "start": "node -r tsconfig-paths/register lib/index.js",
@@ -24,6 +24,8 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-local": "^1.0.38",
     "@types/speakeasy": "^2.0.10",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "eslint": "^8.57.1",
@@ -63,6 +65,8 @@
     "passport-local": "^1.0.0",
     "randombytes": "^2.1.0",
     "speakeasy": "^2.0.0",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
     "tsconfig-paths": "^4.2.0",
     "uuid": "^11.1.0",
     "xlsx": "^0.18.5"

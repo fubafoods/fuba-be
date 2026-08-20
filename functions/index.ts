@@ -2,6 +2,8 @@
 import express from 'express';
 const dotenv = require("dotenv");
 const cors = require('cors');
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger';
 import connectDB from './config/dbConn';
 import authRoutes from './features/auth/auth.route';
 import userRoutes from './features/user/user.route';
@@ -46,6 +48,12 @@ app.use((req, res, next) => {
     url: req.url
   });
   next();
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
 });
 
 app.use('/api/auth', authRoutes);

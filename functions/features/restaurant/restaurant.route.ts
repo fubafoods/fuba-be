@@ -5,43 +5,877 @@ import { uploadImage } from '../../middleware/upload';
 
 const router = Router();
 
-// Create a restaurant (with optional image)
-router.post("/", jwtAuth, uploadImage.single("image"), RestaurantController.create);
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     RestaurantPromo:
+ *       type: object
+ *       properties:
+ *         freeDelivery:
+ *           type: boolean
+ *         discountPercentage:
+ *           type: number
+ *           minimum: 0
+ *           maximum: 100
+ *     RestaurantMapLocation:
+ *       type: object
+ *       properties:
+ *         type:
+ *           type: string
+ *           enum: [Point]
+ *         coordinates:
+ *           type: array
+ *           items:
+ *             type: number
+ *           description: "[longitude, latitude]"
+ *     RestaurantMenuItem:
+ *       type: object
+ *       description: Food item summary as populated on a restaurant's items list
+ *       properties:
+ *         _id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         category:
+ *           type: array
+ *           items:
+ *             type: string
+ *         description:
+ *           type: string
+ *         price:
+ *           type: object
+ *           properties:
+ *             premium:
+ *               type: number
+ *             executive:
+ *               type: number
+ *             regular:
+ *               type: number
+ *         image:
+ *           type: string
+ *     Restaurant:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         image:
+ *           type: string
+ *         coverImage:
+ *           type: string
+ *         street:
+ *           type: string
+ *         state:
+ *           type: string
+ *         isFavorite:
+ *           type: boolean
+ *         mode:
+ *           type: string
+ *           enum: [delivery, pickup, both]
+ *         items:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/RestaurantMenuItem'
+ *         openTime:
+ *           type: string
+ *           description: "Format HH:mm, e.g. 09:00"
+ *         closeTime:
+ *           type: string
+ *           description: "Format HH:mm, e.g. 22:00"
+ *         ratings:
+ *           type: number
+ *           minimum: 0
+ *           maximum: 5
+ *         mapLocation:
+ *           $ref: '#/components/schemas/RestaurantMapLocation'
+ *         promo:
+ *           $ref: '#/components/schemas/RestaurantPromo'
+ *         distanceKm:
+ *           type: number
+ *           description: Distance from the requested mapLocation, in kilometers (only present when the mapLocation query parameter is used)
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *     RestaurantListMeta:
+ *       type: object
+ *       properties:
+ *         total:
+ *           type: integer
+ *         offset:
+ *           type: integer
+ *         limit:
+ *           type: integer
+ */
 
-// Get all restaurants (with optional search and pagination)
+/**
+ * @swagger
+ * /api/restaurant:
+ *   post:
+ *     summary: Create a restaurant
+ *     description: Creates a restaurant. Accepts an optional image upload.
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               street:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *               mode:
+ *                 type: string
+ *                 enum: [delivery, pickup, both]
+ *                 default: both
+ *               openTime:
+ *                 type: string
+ *                 description: "Format HH:mm, e.g. 09:00"
+ *               closeTime:
+ *                 type: string
+ *                 description: "Format HH:mm, e.g. 22:00"
+ *               "promo.freeDelivery":
+ *                 type: boolean
+ *               "promo.discountPercentage":
+ *                 type: number
+ *                 minimum: 0
+ *                 maximum: 100
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Restaurant created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *   get:
+ *     summary: List restaurants
+ *     description: Retrieves restaurants with optional search, promo, favorite and map-location filters, with pagination.
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Case-insensitive search on restaurant name
+ *       - in: query
+ *         name: promo
+ *         schema:
+ *           type: string
+ *         description: "Filter by promo: 'freeDelivery', 'discount', 'any'/'true'/'1', or 'false'/'0'"
+ *       - in: query
+ *         name: mapLocation
+ *         schema:
+ *           type: string
+ *         description: "Filter/sort by location as 'latitude,longitude,radiusKm' (radius defaults to 10km)"
+ *       - in: query
+ *         name: favourite
+ *         schema:
+ *           type: boolean
+ *         description: "Filter by favorite status (alias: favorite)"
+ *     responses:
+ *       200:
+ *         description: List of restaurants
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Restaurant'
+ *                 meta:
+ *                   $ref: '#/components/schemas/RestaurantListMeta'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post("/", jwtAuth, uploadImage.single("image"), RestaurantController.create);
 router.get("/", jwtAuth, RestaurantController.get);
 
-// Get restaurants with active promotions
+/**
+ * @swagger
+ * /api/restaurant/promos/active:
+ *   get:
+ *     summary: List restaurants with active promotions
+ *     description: Retrieves restaurants that currently offer free delivery.
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: List of restaurants with active promos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Restaurant'
+ *                 meta:
+ *                   $ref: '#/components/schemas/RestaurantListMeta'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.get("/promos/active", jwtAuth, RestaurantController.getWithPromos);
 
-// Get restaurants by mode (delivery, pickup, both)
+/**
+ * @swagger
+ * /api/restaurant/mode/{mode}:
+ *   get:
+ *     summary: List restaurants by mode
+ *     description: Retrieves restaurants filtered by service mode.
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: mode
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [delivery, pickup, both]
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: List of restaurants
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Restaurant'
+ *                 meta:
+ *                   $ref: '#/components/schemas/RestaurantListMeta'
+ *       400:
+ *         description: Invalid mode
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.get("/mode/:mode", jwtAuth, RestaurantController.getByMode);
 
-// Get restaurants by state
+/**
+ * @swagger
+ * /api/restaurant/state/{state}:
+ *   get:
+ *     summary: List restaurants by state
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: state
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: List of restaurants
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Restaurant'
+ *                 meta:
+ *                   $ref: '#/components/schemas/RestaurantListMeta'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.get("/state/:state", jwtAuth, RestaurantController.getByState);
 
-// Get a restaurant by ID
+/**
+ * @swagger
+ * /api/restaurant/{id}:
+ *   get:
+ *     summary: Get a restaurant by ID
+ *     description: Retrieves a restaurant, optionally filtering its items by search and applying promo/map-location filters.
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search within the restaurant's items by name
+ *       - in: query
+ *         name: promo
+ *         schema:
+ *           type: string
+ *         description: "Filter by promo: 'freeDelivery', 'discount', 'any'/'true'/'1', or 'false'/'0'"
+ *       - in: query
+ *         name: mapLocation
+ *         schema:
+ *           type: string
+ *         description: "'latitude,longitude,radiusKm' — adds distanceKm to the response"
+ *     responses:
+ *       200:
+ *         description: The restaurant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *   put:
+ *     summary: Update a restaurant
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               street:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *               mode:
+ *                 type: string
+ *                 enum: [delivery, pickup, both]
+ *               openTime:
+ *                 type: string
+ *               closeTime:
+ *                 type: string
+ *               promo:
+ *                 $ref: '#/components/schemas/RestaurantPromo'
+ *               mapLocation:
+ *                 $ref: '#/components/schemas/RestaurantMapLocation'
+ *     responses:
+ *       200:
+ *         description: Updated restaurant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *   delete:
+ *     summary: Delete a restaurant
+ *     description: Deletes a restaurant and its associated image.
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Restaurant deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Restaurant deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.get("/:id", jwtAuth, RestaurantController.getById);
 
-// Update a restaurant by ID
 router.put("/:id", jwtAuth, RestaurantController.update);
 
-// Update restaurant image
+/**
+ * @swagger
+ * /api/restaurant/{id}/image:
+ *   patch:
+ *     summary: Update a restaurant's image
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [image]
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Restaurant image updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *                 message:
+ *                   type: string
+ *                   example: Restaurant image updated successfully
+ *       400:
+ *         description: No image file uploaded
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.patch("/:id/image", jwtAuth, uploadImage.single("image"), RestaurantController.updateImage);
 
-// Update restaurant rating
+/**
+ * @swagger
+ * /api/restaurant/{id}/rating:
+ *   patch:
+ *     summary: Update a restaurant's rating
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [rating]
+ *             properties:
+ *               rating:
+ *                 type: number
+ *                 minimum: 0
+ *                 maximum: 5
+ *     responses:
+ *       200:
+ *         description: Rating updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *                 message:
+ *                   type: string
+ *                   example: Rating updated successfully
+ *       400:
+ *         description: Rating missing or out of range (0-5)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.patch("/:id/rating", jwtAuth, RestaurantController.updateRating);
 
-// Add item to restaurant (accepts multipart/form-data, optional image file)
+/**
+ * @swagger
+ * /api/restaurant/items/add:
+ *   post:
+ *     summary: Add an item to a restaurant
+ *     description: >
+ *       Links an existing food item to a restaurant when `itemId` is provided, or creates a new
+ *       food item from the given payload (optionally with an image) and links it. Provide either
+ *       `itemId`, or an `item` object / top-level item fields (name, description, category, price).
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [restaurantId]
+ *             properties:
+ *               restaurantId:
+ *                 type: string
+ *               itemId:
+ *                 type: string
+ *                 description: ID of an existing food item to link (Path A)
+ *               name:
+ *                 type: string
+ *                 description: New item's name (Path B, when itemId is not provided)
+ *               description:
+ *                 type: string
+ *                 description: New item's description (Path B)
+ *               category:
+ *                 type: string
+ *                 description: Comma-separated or JSON-encoded array of category names (Path B)
+ *               price:
+ *                 type: string
+ *                 description: >
+ *                   New item's price as a single number (applied to all tiers) or a JSON object
+ *                   { "premium": number, "executive": number, "regular": number } (Path B)
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional image for a newly created item (Path B)
+ *     responses:
+ *       200:
+ *         description: Existing item linked to restaurant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *                 message:
+ *                   type: string
+ *                   example: Item added to restaurant
+ *       201:
+ *         description: New item created and added to restaurant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *                 message:
+ *                   type: string
+ *                   example: New item created and added to restaurant
+ *       400:
+ *         description: Missing restaurantId, missing required item fields, or neither itemId nor item payload provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant or item not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/items/add", jwtAuth, uploadImage.single("image"), RestaurantController.addItem);
 
-// Remove item from restaurant
+/**
+ * @swagger
+ * /api/restaurant/items/remove:
+ *   post:
+ *     summary: Remove an item from a restaurant
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [restaurantId, itemId]
+ *             properties:
+ *               restaurantId:
+ *                 type: string
+ *               itemId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Item removed from restaurant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *                 message:
+ *                   type: string
+ *                   example: Item removed from restaurant
+ *       400:
+ *         description: restaurantId and itemId are required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant or item not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/items/remove", jwtAuth, RestaurantController.removeItem);
 
-// Delete a restaurant by ID
 router.delete("/:id", jwtAuth, RestaurantController.delete);
 
-//user mark favorite restaurant
+/**
+ * @swagger
+ * /api/restaurant/{id}/favorite:
+ *   post:
+ *     summary: Toggle favorite status for a restaurant
+ *     tags: [Restaurants]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Favorite status toggled
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Restaurant'
+ *                 message:
+ *                   type: string
+ *                   example: Favorite status toggled successfully
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Restaurant not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/:id/favorite", jwtAuth, RestaurantController.toggleFavorite);
 
 export default router;
