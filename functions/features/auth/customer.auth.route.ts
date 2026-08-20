@@ -12,39 +12,54 @@ const router = express.Router();
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         first_name:
  *           type: string
+ *           example: Ada
  *         last_name:
  *           type: string
+ *           example: Okafor
  *         email:
  *           type: string
+ *           example: ada.okafor@example.com
  *         phone_number:
  *           type: string
+ *           example: "+2348012345678"
  *         role:
  *           type: string
  *           enum: [consumer, vendor, luxury_restaurant, admin]
+ *           description: |
+ *             The actor's account type. Note: this field uses "consumer" for the same actor
+ *             type the auth routes call "customer" (see the Customer Auth tag description).
+ *           example: consumer
  *         service_type:
  *           type: string
  *           enum: [food_vendor, luxury_restaurant]
+ *           example: food_vendor
  *         verified:
  *           type: boolean
+ *           example: true
  *     AuthTokenData:
  *       type: object
  *       properties:
  *         token:
  *           type: string
+ *           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZjJhMWIzYzRkNWU2ZjdhOGI5YzBkMSJ9.4pQm3xW1sVh8y2kzT0bJH6f9Lc7dR2aXeK1nO3wYqEs"
  *         userId:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         user:
  *           $ref: '#/components/schemas/AuthUser'
  */
 
 /**
  * @swagger
- * /api/auth/customer/initiate-verification:
+ * /auth/customer/initiate-verification:
  *   post:
  *     summary: Start customer email verification (sends an OTP)
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/initiate-verification`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -80,10 +95,12 @@ router.post('/initiate-verification', AuthController.initiateEmailVerification);
 
 /**
  * @swagger
- * /api/auth/customer/verify-email:
+ * /auth/customer/verify-email:
  *   post:
  *     summary: Verify the OTP sent to a customer's email
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/verify-email`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -126,11 +143,14 @@ router.post('/verify-email', AuthController.verifyEmail);
 
 /**
  * @swagger
- * /api/auth/customer/register:
+ * /auth/customer/register:
  *   post:
  *     summary: Complete customer registration
- *     description: Finishes signup using the verification_token obtained from /verify-email.
- *     tags: [Auth - Customer]
+ *     description: >
+ *       Finishes signup using the verification_token obtained from /verify-email.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/register`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -179,10 +199,12 @@ router.post('/register', AuthController.completeRegistration);
 
 /**
  * @swagger
- * /api/auth/customer/resend-verification-email:
+ * /auth/customer/resend-verification-email:
  *   post:
  *     summary: Resend the customer email verification OTP
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/resend-verification-email`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -213,10 +235,12 @@ router.post('/resend-verification-email', AuthController.resendVerificationEmail
 
 /**
  * @swagger
- * /api/auth/customer/login:
+ * /auth/customer/login:
  *   post:
  *     summary: Log in as a customer
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/login`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -258,10 +282,12 @@ router.post('/login', AuthController.login);
 
 /**
  * @swagger
- * /api/auth/customer/google:
+ * /auth/customer/google:
  *   post:
  *     summary: Sign up/in with a Google ID token
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/google`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -303,10 +329,12 @@ router.post('/google', AuthController.googleSignIn);
 
 /**
  * @swagger
- * /api/auth/customer/google-login:
+ * /auth/customer/google-login:
  *   post:
  *     summary: Log in with a Google ID token
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/google-login`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -348,10 +376,12 @@ router.post('/google-login', AuthController.googleLogin);
 
 /**
  * @swagger
- * /api/auth/customer/request-otp:
+ * /auth/customer/request-otp:
  *   post:
  *     summary: Request a password-reset OTP
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/request-otp`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -386,10 +416,12 @@ router.post('/request-otp', AuthController.requestOTP);
 
 /**
  * @swagger
- * /api/auth/customer/verify-otp:
+ * /auth/customer/verify-otp:
  *   post:
  *     summary: Verify a password-reset OTP
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/verify-otp`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -430,10 +462,12 @@ router.post('/verify-otp', AuthController.verifyOTP);
 
 /**
  * @swagger
- * /api/auth/customer/reset-password:
+ * /auth/customer/reset-password:
  *   post:
  *     summary: Set a new password using a verified OTP
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/reset-password`
+ *     tags: [Customer Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -480,10 +514,12 @@ router.post('/reset-password', AuthController.newPassword);
 
 /**
  * @swagger
- * /api/auth/customer/change-password:
+ * /auth/customer/change-password:
  *   post:
  *     summary: Change the authenticated user's password
- *     tags: [Auth - Customer]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/customer/change-password`
+ *     tags: [Customer Auth]
  *     security:
  *       - bearerAuth: []
  *     requestBody:

@@ -12,46 +12,61 @@ const router = Router();
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d3"
  *         choiceOfMeal:
  *           type: string
  *           description: FoodItem ObjectId (may be populated with name, category, description, price, image)
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         description:
  *           type: string
+ *           example: Party jollof rice with grilled chicken and fried plantain
  *         note:
  *           type: string
+ *           example: Extra spicy, no onions please
  *         quantity:
  *           type: integer
+ *           example: 2
  *         measurement:
  *           type: string
  *           enum: [litre, service]
+ *           example: service
  *         amount:
  *           type: number
  *           description: Amount to be charged for this meal item
+ *           example: 4500
  *     FoodPrep:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d4"
  *         consumer:
  *           type: string
  *           description: User (consumer) ObjectId, may be populated with name and email
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d5"
  *         chefChoice:
  *           type: string
  *           description: Chef (User) ObjectId, may be populated with name and email
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d6"
  *         status:
  *           type: string
  *           enum: [pending, confirmed, preparing, ready, delivered, cancelled]
  *           default: pending
+ *           example: confirmed
  *         mode:
  *           type: string
  *           enum: [delivery, pickup]
+ *           example: delivery
  *         deliveryDate:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:00:00.000Z"
  *         address:
  *           type: string
+ *           example: 12 Admiralty Way, Lekki Phase 1, Lagos
  *         phoneNumber:
  *           type: string
+ *           example: "+2348012345678"
  *         meals:
  *           type: array
  *           items:
@@ -59,26 +74,33 @@ const router = Router();
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-05-30T09:15:00.000Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T08:00:00.000Z"
  *     FoodPrepListMeta:
  *       type: object
  *       properties:
  *         total:
  *           type: integer
+ *           example: 18
  *         offset:
  *           type: integer
+ *           example: 0
  *         limit:
  *           type: integer
+ *           example: 10
  */
 
 /**
  * @swagger
- * /api/food-prep:
+ * /food-prep:
  *   post:
  *     summary: Create a food preparation entry
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/food-prep`
+ *     tags: [Food Prep]
  *     requestBody:
  *       required: true
  *       content:
@@ -151,7 +173,9 @@ const router = Router();
  *               $ref: '#/components/schemas/ErrorResponse'
  *   get:
  *     summary: List food preparation entries
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-prep`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: query
  *         name: page
@@ -189,10 +213,12 @@ router.get('/', FoodPrepController.get);
 
 /**
  * @swagger
- * /api/food-prep/status/{status}:
+ * /food-prep/status/{status}:
  *   get:
  *     summary: Get food preparation entries by status
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-prep/status/{status}`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: path
  *         name: status
@@ -239,10 +265,12 @@ router.get('/status/:status', FoodPrepController.getByStatus);
 
 /**
  * @swagger
- * /api/food-prep/mode/{mode}:
+ * /food-prep/mode/{mode}:
  *   get:
  *     summary: Get food preparation entries by delivery mode
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-prep/mode/{mode}`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: path
  *         name: mode
@@ -289,10 +317,12 @@ router.get('/mode/:mode', FoodPrepController.getByMode);
 
 /**
  * @swagger
- * /api/food-prep/{id}:
+ * /food-prep/{id}:
  *   get:
  *     summary: Get a food preparation entry by ID
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-prep/{id}`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: path
  *         name: id
@@ -320,7 +350,9 @@ router.get('/mode/:mode', FoodPrepController.getByMode);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   put:
  *     summary: Update a food preparation entry
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `PUT https://fuba-be-hbjt.onrender.com/api/food-prep/{id}`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: path
  *         name: id
@@ -379,7 +411,9 @@ router.get('/mode/:mode', FoodPrepController.getByMode);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   delete:
  *     summary: Delete a food preparation entry
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/food-prep/{id}`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: path
  *         name: id
@@ -415,10 +449,12 @@ router.put('/:id', FoodPrepController.update);
 
 /**
  * @swagger
- * /api/food-prep/{id}/status:
+ * /food-prep/{id}/status:
  *   patch:
  *     summary: Update a food preparation entry's status
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/food-prep/{id}/status`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: path
  *         name: id
@@ -470,10 +506,12 @@ router.patch('/:id/status', FoodPrepController.updateStatus);
 
 /**
  * @swagger
- * /api/food-prep/consumer/{consumerId}:
+ * /food-prep/consumer/{consumerId}:
  *   get:
  *     summary: Get food preparation entries by consumer ID
- *     tags: [FoodPrep]
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-prep/consumer/{consumerId}`
+ *     tags: [Food Prep]
  *     parameters:
  *       - in: path
  *         name: consumerId

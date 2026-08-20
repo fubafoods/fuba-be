@@ -14,56 +14,71 @@ const router = Router();
  *       properties:
  *         premium:
  *           type: number
+ *           example: 4500
  *         executive:
  *           type: number
+ *           example: 3500
  *         regular:
  *           type: number
+ *           example: 2500
  *     FoodItem:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         name:
  *           type: string
+ *           example: Jollof Rice with Grilled Chicken
  *         description:
  *           type: string
+ *           example: Smoky party-style jollof rice served with grilled chicken and fried plantain
  *         price:
  *           $ref: '#/components/schemas/FoodItemPrice'
  *         vendor:
  *           type: string
  *           nullable: true
  *           description: Vendor (User) ObjectId. Omitted/null for Home Chef items not tied to a vendor.
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d2"
  *         image:
  *           type: string
  *           description: Cloudinary URL of the food item image
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/food-items/jollof-rice.jpg"
  *         category:
  *           type: array
  *           items:
  *             type: string
  *           description: List of category names
+ *           example: ["Rice Dishes", "Party Food"]
  *         available:
  *           type: boolean
  *           default: true
+ *           example: true
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:00:00.000Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-05T14:30:00.000Z"
  *     FoodItemListMeta:
  *       type: object
  *       properties:
  *         total:
  *           type: integer
+ *           example: 42
  *         offset:
  *           type: integer
+ *           example: 0
  *         limit:
  *           type: integer
+ *           example: 10
  */
 
 /**
  * @swagger
- * /api/food-item:
+ * /food-item:
  *   post:
  *     summary: Create a food item
  *     description: >
@@ -72,7 +87,9 @@ const router = Router();
  *       created as unassigned "Home Chef" items. Because this endpoint accepts
  *       multipart/form-data, nested `price` fields must be sent using dot-notation
  *       keys (`price.premium`, `price.executive`, `price.regular`).
- *     tags: [FoodItems]
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/food-item`
+ *     tags: [Food Items]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -126,8 +143,11 @@ const router = Router();
  *               $ref: '#/components/schemas/ErrorResponse'
  *   get:
  *     summary: List food items
- *     description: Public endpoint to list food items with optional search and category filters.
- *     tags: [FoodItems]
+ *     description: >
+ *       Public endpoint to list food items with optional search and category filters.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-item`
+ *     tags: [Food Items]
  *     parameters:
  *       - in: query
  *         name: offset
@@ -180,10 +200,12 @@ router.get('/', FoodItemController.get);
 
 /**
  * @swagger
- * /api/food-item/vendor/{vendorId}:
+ * /food-item/vendor/{vendorId}:
  *   get:
  *     summary: Get food items by vendor ID
- *     tags: [FoodItems]
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-item/vendor/{vendorId}`
+ *     tags: [Food Items]
  *     parameters:
  *       - in: path
  *         name: vendorId
@@ -223,10 +245,12 @@ router.get('/vendor/:vendorId', FoodItemController.getByVendor);
 
 /**
  * @swagger
- * /api/food-item/{id}:
+ * /food-item/{id}:
  *   get:
  *     summary: Get a food item by ID
- *     tags: [FoodItems]
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/food-item/{id}`
+ *     tags: [Food Items]
  *     parameters:
  *       - in: path
  *         name: id
@@ -257,8 +281,10 @@ router.get('/vendor/:vendorId', FoodItemController.getByVendor);
  *     description: >
  *       Updates a food item by ID. Any `vendor` field submitted by the client is
  *       ignored/stripped. Sent as a JSON body (no image upload on this endpoint;
- *       use PATCH /api/food-item/{id}/image to change the image).
- *     tags: [FoodItems]
+ *       use PATCH /food-item/{id}/image to change the image).
+ *
+ *       **Full URL:** `PUT https://fuba-be-hbjt.onrender.com/api/food-item/{id}`
+ *     tags: [Food Items]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -313,8 +339,11 @@ router.get('/vendor/:vendorId', FoodItemController.getByVendor);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   delete:
  *     summary: Delete a food item
- *     description: Deletes a food item (and its uploaded image on Cloudinary, if any).
- *     tags: [FoodItems]
+ *     description: >
+ *       Deletes a food item (and its uploaded image on Cloudinary, if any).
+ *
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/food-item/{id}`
+ *     tags: [Food Items]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -358,11 +387,14 @@ router.put('/:id', jwtAuth, FoodItemController.update);
 
 /**
  * @swagger
- * /api/food-item/{id}/image:
+ * /food-item/{id}/image:
  *   patch:
  *     summary: Update a food item's image
- *     description: Replaces the image for a food item.
- *     tags: [FoodItems]
+ *     description: >
+ *       Replaces the image for a food item.
+ *
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/food-item/{id}/image`
+ *     tags: [Food Items]
  *     security:
  *       - bearerAuth: []
  *     parameters:

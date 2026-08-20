@@ -17,82 +17,108 @@ router.use(jwtAuth);
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0f1"
  *         filename:
  *           type: string
  *           description: Cloudinary public ID used as the stored filename
+ *           example: receipt.jpg
  *         originalName:
  *           type: string
+ *           example: receipt.jpg
  *         url:
  *           type: string
  *           description: Cloudinary secure URL
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/uploads/receipt.jpg"
  *         publicId:
  *           type: string
+ *           example: uploads/receipt
  *         mimetype:
  *           type: string
+ *           example: image/jpeg
  *         size:
  *           type: integer
  *           description: File size in bytes
+ *           example: 245678
  *         resourceType:
  *           type: string
  *           enum: [image, raw, video, auto]
+ *           example: image
  *         folder:
  *           type: string
+ *           example: uploads
  *         uploadedBy:
  *           type: string
  *           description: User ObjectId of the uploader
+ *           example: "64f2a1b3c4d5e6f7a8b9c0f2"
  *         associatedModel:
  *           type: string
  *           description: Name of the associated Mongoose model, e.g. Restaurant, FoodItem, User
+ *           example: Restaurant
  *         associatedId:
  *           type: string
  *           description: ObjectId of the associated document
+ *           example: "64f2a1b3c4d5e6f7a8b9c0f3"
  *         metadata:
  *           type: object
  *           additionalProperties: true
  *         isPublic:
  *           type: boolean
+ *           example: true
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:00:00.000Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:15:00.000Z"
  *     FileUploadResult:
  *       type: object
  *       description: Slim shape returned by the upload endpoints
  *       properties:
  *         id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0f1"
  *         url:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/uploads/receipt.jpg"
  *         publicId:
  *           type: string
+ *           example: uploads/receipt
  *         filename:
  *           type: string
+ *           example: receipt.jpg
  *         mimetype:
  *           type: string
+ *           example: image/jpeg
  *         size:
  *           type: integer
+ *           example: 245678
  *     FileListMeta:
  *       type: object
  *       properties:
  *         total:
  *           type: integer
+ *           example: 42
  *         offset:
  *           type: integer
+ *           example: 0
  *         limit:
  *           type: integer
+ *           example: 10
  */
 
 /**
  * @swagger
- * /api/file/upload:
+ * /file/upload:
  *   post:
  *     summary: Upload a single file
  *     description: >
  *       Uploads a single file (image or document) to Cloudinary and stores its metadata.
  *       Accepts images (jpeg, png, gif, webp, svg) and documents (pdf, doc, docx, xls, xlsx).
  *       Maximum file size 10MB.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/file/upload`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -150,13 +176,15 @@ router.post("/upload", upload.single("file"), FileController.uploadSingle);
 
 /**
  * @swagger
- * /api/file/upload-multiple:
+ * /file/upload-multiple:
  *   post:
  *     summary: Upload multiple files (max 10)
  *     description: >
  *       Uploads up to 10 files (images or documents) to Cloudinary and stores their metadata.
  *       Accepts images (jpeg, png, gif, webp, svg) and documents (pdf, doc, docx, xls, xlsx).
  *       Maximum file size 10MB each.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/file/upload-multiple`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -219,10 +247,13 @@ router.post("/upload-multiple", upload.array("files", 10), FileController.upload
 
 /**
  * @swagger
- * /api/file/upload-image:
+ * /file/upload-image:
  *   post:
  *     summary: Upload a single image
- *     description: Uploads a single image (jpeg, png, gif, webp, svg) to Cloudinary. Maximum file size 5MB.
+ *     description: >
+ *       Uploads a single image (jpeg, png, gif, webp, svg) to Cloudinary. Maximum file size 5MB.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/file/upload-image`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -280,10 +311,13 @@ router.post("/upload-image", uploadImage.single("image"), FileController.uploadS
 
 /**
  * @swagger
- * /api/file/upload-images:
+ * /file/upload-images:
  *   post:
  *     summary: Upload multiple images (max 10)
- *     description: Uploads up to 10 images (jpeg, png, gif, webp, svg) to Cloudinary. Maximum file size 5MB each.
+ *     description: >
+ *       Uploads up to 10 images (jpeg, png, gif, webp, svg) to Cloudinary. Maximum file size 5MB each.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/file/upload-images`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -346,9 +380,11 @@ router.post("/upload-images", uploadImage.array("images", 10), FileController.up
 
 /**
  * @swagger
- * /api/file/my-files:
+ * /file/my-files:
  *   get:
  *     summary: Get the authenticated user's uploaded files
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/file/my-files`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -392,10 +428,13 @@ router.get("/my-files", FileController.getMyFiles);
 
 /**
  * @swagger
- * /api/file:
+ * /file:
  *   get:
  *     summary: List files
- *     description: Retrieves all files with pagination.
+ *     description: >
+ *       Retrieves all files with pagination.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/file`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -439,9 +478,11 @@ router.get("/", FileController.get);
 
 /**
  * @swagger
- * /api/file/user/{userId}:
+ * /file/user/{userId}:
  *   get:
  *     summary: Get files uploaded by a specific user
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/file/user/{userId}`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -490,10 +531,13 @@ router.get("/user/:userId", FileController.getByUser);
 
 /**
  * @swagger
- * /api/file/associated/{model}/{documentId}:
+ * /file/associated/{model}/{documentId}:
  *   get:
  *     summary: Get files associated with a specific model and document
- *     description: e.g. files for a specific restaurant, food item or user.
+ *     description: >
+ *       e.g. files for a specific restaurant, food item or user.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/file/associated/{model}/{documentId}`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -548,10 +592,13 @@ router.get("/associated/:model/:documentId", FileController.getByAssociation);
 
 /**
  * @swagger
- * /api/file/{id}/transform:
+ * /file/{id}/transform:
  *   get:
  *     summary: Get a transformed image URL
- *     description: Builds a Cloudinary transformation URL for an existing image file. Only available for files whose resourceType is "image".
+ *     description: >
+ *       Builds a Cloudinary transformation URL for an existing image file. Only available for files whose resourceType is "image".
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/file/{id}/transform`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -626,9 +673,11 @@ router.get("/:id/transform", FileController.getTransformedUrl);
 
 /**
  * @swagger
- * /api/file/{id}/signed-url:
+ * /file/{id}/signed-url:
  *   get:
  *     summary: Get a signed URL for a private file
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/file/{id}/signed-url`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -681,9 +730,11 @@ router.get("/:id/signed-url", FileController.getSignedUrl);
 
 /**
  * @swagger
- * /api/file/{id}:
+ * /file/{id}:
  *   get:
  *     summary: Get a file by ID
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/file/{id}`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -720,7 +771,10 @@ router.get("/:id/signed-url", FileController.getSignedUrl);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   delete:
  *     summary: Delete a file by ID
- *     description: Deletes the file from Cloudinary (best-effort) and removes its metadata from the database.
+ *     description: >
+ *       Deletes the file from Cloudinary (best-effort) and removes its metadata from the database.
+ *
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/file/{id}`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -762,10 +816,13 @@ router.get("/:id", FileController.getById);
 
 /**
  * @swagger
- * /api/file/bulk:
+ * /file/bulk:
  *   delete:
  *     summary: Delete multiple files
- *     description: Deletes multiple files by ID from Cloudinary (best-effort) and the database.
+ *     description: >
+ *       Deletes multiple files by ID from Cloudinary (best-effort) and the database.
+ *
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/file/bulk`
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -818,7 +875,7 @@ router.get("/:id", FileController.getById);
 // Delete multiple files
 router.delete("/bulk", FileController.deleteMultiple);
 
-// Delete file by ID (documented together with GET /api/file/{id} above)
+// Delete file by ID (documented together with GET /file/{id} above)
 router.delete("/:id", FileController.delete);
 
 export default router;

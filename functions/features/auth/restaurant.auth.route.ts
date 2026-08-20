@@ -14,25 +14,34 @@ const router = express.Router();
  *       properties:
  *         day:
  *           type: string
+ *           example: Monday
  *         open_hour:
  *           type: integer
+ *           example: 10
  *         open_minute:
  *           type: integer
+ *           example: 0
  *         close_hour:
  *           type: integer
+ *           example: 22
  *         close_minute:
  *           type: integer
+ *           example: 0
  *     RestaurantApplication:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d4"
  *         brand_name:
  *           type: string
+ *           example: The Grill House
  *         brand_category:
  *           type: string
+ *           example: Fine Dining
  *         brand_address:
  *           type: string
+ *           example: 5 Ademola Adetokunbo Crescent, Wuse II, Abuja
  *         operating_hours:
  *           type: array
  *           items:
@@ -40,25 +49,33 @@ const router = express.Router();
  *         delivery_type:
  *           type: string
  *           enum: [pickup, delivery, both]
+ *           example: both
  *         brand_logo:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/restaurant-logos/grill-house.jpg"
  *         cover_image:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/restaurant-covers/grill-house.jpg"
  *         brand_registration_number:
  *           type: string
+ *           example: RC7654321
  *         cac_certificate:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/raw/upload/v1700000000/cac-certificates/grill-house.pdf"
  *         status:
  *           type: string
  *           enum: [pending_review, approved, rejected]
+ *           example: pending_review
  */
 
 /**
  * @swagger
- * /api/auth/restaurant/initiate-verification:
+ * /auth/restaurant/initiate-verification:
  *   post:
  *     summary: Start restaurant email verification (sends an OTP)
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/initiate-verification`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -88,10 +105,12 @@ router.post('/initiate-verification', RestaurantAuthController.initiateVerificat
 
 /**
  * @swagger
- * /api/auth/restaurant/verify:
+ * /auth/restaurant/verify:
  *   post:
  *     summary: Verify the restaurant email OTP
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/verify`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -134,10 +153,12 @@ router.post('/verify', RestaurantAuthController.verifyOtp);
 
 /**
  * @swagger
- * /api/auth/restaurant/resend-otp:
+ * /auth/restaurant/resend-otp:
  *   post:
  *     summary: Resend the restaurant email verification OTP
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/resend-otp`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -167,11 +188,14 @@ router.post('/resend-otp', RestaurantAuthController.resendOtp);
 
 /**
  * @swagger
- * /api/auth/restaurant/register:
+ * /auth/restaurant/register:
  *   post:
  *     summary: Submit a restaurant application
- *     description: Completes restaurant signup using the verification_token from /verify. Submits the application for review. Accepts optional brand logo/cover images and a CAC certificate document.
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       Completes restaurant signup using the verification_token from /verify. Submits the application for review. Accepts optional brand logo/cover images and a CAC certificate document.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/register`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -256,10 +280,12 @@ router.post(
 
 /**
  * @swagger
- * /api/auth/restaurant/login:
+ * /auth/restaurant/login:
  *   post:
  *     summary: Log in as a restaurant
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/login`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -301,10 +327,12 @@ router.post('/login', AuthController.login);
 
 /**
  * @swagger
- * /api/auth/restaurant/request-otp:
+ * /auth/restaurant/request-otp:
  *   post:
  *     summary: Request a password-reset OTP
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/request-otp`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -339,10 +367,12 @@ router.post('/request-otp', AuthController.requestOTP);
 
 /**
  * @swagger
- * /api/auth/restaurant/verify-otp:
+ * /auth/restaurant/verify-otp:
  *   post:
  *     summary: Verify a password-reset OTP
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/verify-otp`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -383,10 +413,12 @@ router.post('/verify-otp', AuthController.verifyOTP);
 
 /**
  * @swagger
- * /api/auth/restaurant/reset-password:
+ * /auth/restaurant/reset-password:
  *   post:
  *     summary: Set a new password using a verified OTP
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/reset-password`
+ *     tags: [Restaurant Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -433,10 +465,12 @@ router.post('/reset-password', AuthController.newPassword);
 
 /**
  * @swagger
- * /api/auth/restaurant/change-password:
+ * /auth/restaurant/change-password:
  *   post:
  *     summary: Change the authenticated restaurant user's password
- *     tags: [Auth - Restaurant]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/restaurant/change-password`
+ *     tags: [Restaurant Auth]
  *     security:
  *       - bearerAuth: []
  *     requestBody:

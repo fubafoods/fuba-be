@@ -13,17 +13,21 @@ const router = Router();
  *         foodItem:
  *           type: string
  *           description: FoodItem ObjectId
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d3"
  *         quantity:
  *           type: integer
  *           minimum: 1
+ *           example: 2
  *     Cart:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d4"
  *         consumer:
  *           type: string
  *           description: User (consumer) ObjectId
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         items:
  *           type: array
  *           items:
@@ -31,17 +35,22 @@ const router = Router();
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:00:00.000Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-05T14:30:00.000Z"
  */
 
 /**
  * @swagger
- * /api/cart/{consumerId}:
+ * /cart/{consumerId}:
  *   get:
  *     summary: Get a consumer's cart
- *     description: Returns the cart for the given consumer. If no cart exists yet, returns an empty items list rather than a 404.
+ *     description: >
+ *       Returns the cart for the given consumer. If no cart exists yet, returns an empty items list rather than a 404.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/cart/{consumerId}`
  *     tags: [Cart]
  *     parameters:
  *       - in: path
@@ -71,10 +80,13 @@ router.get('/:consumerId', CartController.getCart);
 
 /**
  * @swagger
- * /api/cart/{consumerId}/items:
+ * /cart/{consumerId}/items:
  *   post:
  *     summary: Add an item to the cart
- *     description: Adds a food item (or increments its quantity) in the consumer's cart, creating the cart if it doesn't exist yet.
+ *     description: >
+ *       Adds a food item (or increments its quantity) in the consumer's cart, creating the cart if it doesn't exist yet.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/cart/{consumerId}/items`
  *     tags: [Cart]
  *     parameters:
  *       - in: path
@@ -124,9 +136,11 @@ router.post('/:consumerId/items', CartController.addItem);
 
 /**
  * @swagger
- * /api/cart/{consumerId}/items/{foodItemId}:
+ * /cart/{consumerId}/items/{foodItemId}:
  *   put:
  *     summary: Update an item's quantity in the cart
+ *     description: >
+ *       **Full URL:** `PUT https://fuba-be-hbjt.onrender.com/api/cart/{consumerId}/items/{foodItemId}`
  *     tags: [Cart]
  *     parameters:
  *       - in: path
@@ -183,6 +197,8 @@ router.post('/:consumerId/items', CartController.addItem);
  *                   example: Item not found in cart
  *   delete:
  *     summary: Remove an item from the cart
+ *     description: >
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/cart/{consumerId}/items/{foodItemId}`
  *     tags: [Cart]
  *     parameters:
  *       - in: path
@@ -219,10 +235,13 @@ router.delete('/:consumerId/items/:foodItemId', CartController.removeItem);
 
 /**
  * @swagger
- * /api/cart/{consumerId}/clear:
+ * /cart/{consumerId}/clear:
  *   delete:
  *     summary: Clear the cart
- *     description: Removes all items from the consumer's cart.
+ *     description: >
+ *       Removes all items from the consumer's cart.
+ *
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/cart/{consumerId}/clear`
  *     tags: [Cart]
  *     parameters:
  *       - in: path

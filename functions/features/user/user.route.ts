@@ -34,105 +34,140 @@ router.use((req, res, next) => {
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         email:
  *           type: string
  *           format: email
+ *           example: "ada.okafor@example.com"
  *         username:
  *           type: string
+ *           example: "ada_okafor"
  *         phone_number:
  *           type: string
+ *           example: "+2348012345678"
  *         role:
  *           type: string
  *           enum: [consumer, vendor, luxury_restaurant, admin]
+ *           example: consumer
  *         service_type:
  *           type: string
  *           enum: [food_vendor, luxury_restaurant]
+ *           example: food_vendor
  *         first_name:
  *           type: string
+ *           example: "Ada"
  *         last_name:
  *           type: string
+ *           example: "Okafor"
  *         full_name:
  *           type: string
  *           description: Virtual property derived from first_name and last_name
+ *           example: "Ada Okafor"
  *         profile_picture:
  *           type: string
  *           description: Cloudinary URL of the user's profile picture
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/profiles/ada-okafor.jpg"
  *         verified:
  *           type: boolean
+ *           example: true
  *         mapLocation:
  *           type: object
  *           properties:
  *             latitude:
  *               type: number
+ *               example: 6.5244
  *             longitude:
  *               type: number
+ *               example: 3.3792
  *         favoriteRestaurants:
  *           type: array
  *           items:
  *             type: string
+ *             example: "64f2a1b3c4d5e6f7a8b9c0d2"
  *           description: Restaurant ObjectIds
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:00:00.000Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-05T14:30:00.000Z"
  *     UserProfileSummary:
  *       type: object
  *       description: Trimmed user representation returned by profile-picture and details update endpoints.
  *       properties:
  *         id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         email:
  *           type: string
  *           format: email
+ *           example: "ada.okafor@example.com"
  *         full_name:
  *           type: string
+ *           example: "Ada Okafor"
  *         profile_picture:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/profiles/ada-okafor.jpg"
  *         first_name:
  *           type: string
+ *           example: "Ada"
  *         last_name:
  *           type: string
+ *           example: "Okafor"
  *         role:
  *           type: string
  *           enum: [consumer, vendor, luxury_restaurant, admin]
+ *           example: consumer
  *     UserUpdateProfileInput:
  *       type: object
  *       description: Partial set of profile fields to update.
  *       properties:
  *         first_name:
  *           type: string
+ *           example: "Ada"
  *         last_name:
  *           type: string
+ *           example: "Okafor"
  *         username:
  *           type: string
+ *           example: "ada_okafor"
  *         phone_number:
  *           type: string
+ *           example: "+2348012345678"
  *         service_type:
  *           type: string
  *           enum: [food_vendor, luxury_restaurant]
+ *           example: food_vendor
  *         mapLocation:
  *           type: object
  *           properties:
  *             latitude:
  *               type: number
+ *               example: 6.5244
  *             longitude:
  *               type: number
+ *               example: 3.3792
  *         favoriteRestaurants:
  *           type: array
  *           items:
  *             type: string
+ *             example: "64f2a1b3c4d5e6f7a8b9c0d2"
  *         settings:
  *           type: string
+ *           example: "dark_mode_enabled"
  */
 
 /**
  * @swagger
- * /api/user/{userId}:
+ * /user/{userId}:
  *   get:
  *     summary: Get a user by ID
- *     description: Fetches a user document by its ID. Requires a valid Bearer token.
+ *     description: >
+ *       Fetches a user document by its ID. Requires a valid Bearer token.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/user/{userId}`
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -179,9 +214,11 @@ router.get('/:userId', UserController.getUserById);
 
 /**
  * @swagger
- * /api/user/profile/{userId}:
+ * /user/profile/{userId}:
  *   get:
  *     summary: Get a user's profile
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/user/profile/{userId}`
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -218,7 +255,10 @@ router.get('/:userId', UserController.getUserById);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   put:
  *     summary: Update a user's profile
- *     description: Partially updates profile fields for the given user.
+ *     description: >
+ *       Partially updates profile fields for the given user.
+ *
+ *       **Full URL:** `PUT https://fuba-be-hbjt.onrender.com/api/user/profile/{userId}`
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -270,6 +310,8 @@ router.get('/:userId', UserController.getUserById);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   patch:
  *     summary: Update a user's password
+ *     description: >
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/user/profile/{userId}`
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -332,13 +374,15 @@ router.patch('/profile/:userId', UserController.updatePassword);
 
 /**
  * @swagger
- * /api/user/profile/{userId}/profile-picture:
+ * /user/profile/{userId}/profile-picture:
  *   patch:
  *     summary: Update a user's profile picture
  *     description: >
  *       Updates the user's profile picture. Accepts either a multipart image
  *       upload (field name `image`) or a JSON body with an `imageUrl`. If a
  *       file is provided it takes precedence; otherwise `imageUrl` is used.
+ *
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/user/profile/{userId}/profile-picture`
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -411,13 +455,15 @@ router.patch(
 
 /**
  * @swagger
- * /api/user/profile/{userId}/details:
+ * /user/profile/{userId}/details:
  *   patch:
  *     summary: Update user details (with optional profile picture)
  *     description: >
  *       Updates profile fields and optionally replaces the profile picture in
  *       a single request. Accepts multipart form data (any field name may
  *       carry the image file, e.g. `image`) or a plain JSON body with no file.
+ *
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/user/profile/{userId}/details`
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []

@@ -15,39 +15,55 @@ const router = express.Router();
  *       properties:
  *         day:
  *           type: string
+ *           example: Monday
  *         open_hour:
  *           type: integer
+ *           example: 9
  *         open_minute:
  *           type: integer
+ *           example: 0
  *         close_hour:
  *           type: integer
+ *           example: 21
  *         close_minute:
  *           type: integer
+ *           example: 0
  *     VendorProfile:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d3"
  *         user:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         brand_name:
  *           type: string
+ *           example: Mama Ada's Kitchen
  *         brand_category:
  *           type: string
+ *           example: Local Cuisine
  *         brand_description:
  *           type: string
+ *           example: Home-style Nigerian meals made fresh daily.
  *         brand_image:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/vendor-logos/mama-ada.jpg"
  *         brand_cover_image:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/vendor-covers/mama-ada.jpg"
  *         business_email:
  *           type: string
+ *           example: hello@mamaadaskitchen.com
  *         business_phone:
  *           type: string
+ *           example: "+2348012345678"
  *         brand_address:
  *           type: string
+ *           example: 12 Aba Road, Port Harcourt
  *         state:
  *           type: string
+ *           example: Rivers
  *         operating_hours:
  *           type: array
  *           items:
@@ -55,24 +71,31 @@ const router = express.Router();
  *         delivery_type:
  *           type: string
  *           enum: [pickup, delivery, both]
+ *           example: both
  *         brand_registration_number:
  *           type: string
+ *           example: RC1234567
  *         cac_certificate:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/raw/upload/v1700000000/vendor-cac/mama-ada.pdf"
  *         nafdac_status:
  *           type: string
  *           enum: [not_requested, pending, paid, uploaded, approved, rejected]
+ *           example: not_requested
  *         status:
  *           type: string
  *           enum: [pending, approved, rejected]
+ *           example: pending
  */
 
 /**
  * @swagger
- * /api/auth/vendor/check-area:
+ * /auth/vendor/check-area:
  *   post:
  *     summary: Check whether a state/address is within an available delivery area
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/check-area`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -108,10 +131,12 @@ router.post('/check-area', VendorAuthController.checkArea);
 
 /**
  * @swagger
- * /api/auth/vendor/waitlist:
+ * /auth/vendor/waitlist:
  *   post:
  *     summary: Join the vendor waitlist for an unavailable area
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/waitlist`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -153,10 +178,12 @@ router.post('/waitlist', VendorAuthController.joinWaitlist);
 
 /**
  * @swagger
- * /api/auth/vendor/initiate-verification:
+ * /auth/vendor/initiate-verification:
  *   post:
  *     summary: Start vendor email verification (sends an OTP)
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/initiate-verification`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -186,10 +213,12 @@ router.post('/initiate-verification', VendorAuthController.initiateVerification)
 
 /**
  * @swagger
- * /api/auth/vendor/verify:
+ * /auth/vendor/verify:
  *   post:
  *     summary: Verify the vendor email OTP
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/verify`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -232,11 +261,14 @@ router.post('/verify', VendorAuthController.verifyOtp);
 
 /**
  * @swagger
- * /api/auth/vendor/register:
+ * /auth/vendor/register:
  *   post:
  *     summary: Complete vendor registration
- *     description: Finishes vendor signup using the verification_token from /verify. Accepts optional brand logo/cover images and a CAC certificate document.
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       Finishes vendor signup using the verification_token from /verify. Accepts optional brand logo/cover images and a CAC certificate document.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/register`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -324,10 +356,12 @@ router.post(
 
 /**
  * @swagger
- * /api/auth/vendor/nafdac-request:
+ * /auth/vendor/nafdac-request:
  *   post:
  *     summary: Request a NAFDAC seal for the authenticated vendor's brand
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/nafdac-request`
+ *     tags: [Vendor Auth]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -378,10 +412,12 @@ router.post('/nafdac-request', jwtAuth, VendorAuthController.requestNafdacSeal);
 
 /**
  * @swagger
- * /api/auth/vendor/nafdac-verify-payment:
+ * /auth/vendor/nafdac-verify-payment:
  *   post:
  *     summary: Verify payment for a NAFDAC seal request
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/nafdac-verify-payment`
+ *     tags: [Vendor Auth]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -426,10 +462,12 @@ router.post('/nafdac-verify-payment', jwtAuth, VendorAuthController.verifyNafdac
 
 /**
  * @swagger
- * /api/auth/vendor/nafdac-upload:
+ * /auth/vendor/nafdac-upload:
  *   post:
  *     summary: Upload the NAFDAC seal document for the authenticated vendor
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/nafdac-upload`
+ *     tags: [Vendor Auth]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -487,10 +525,12 @@ router.post(
 
 /**
  * @swagger
- * /api/auth/vendor/login:
+ * /auth/vendor/login:
  *   post:
  *     summary: Log in as a vendor
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/login`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -532,10 +572,12 @@ router.post('/login', AuthController.login);
 
 /**
  * @swagger
- * /api/auth/vendor/request-otp:
+ * /auth/vendor/request-otp:
  *   post:
  *     summary: Request a password-reset OTP
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/request-otp`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -570,10 +612,12 @@ router.post('/request-otp', AuthController.requestOTP);
 
 /**
  * @swagger
- * /api/auth/vendor/verify-otp:
+ * /auth/vendor/verify-otp:
  *   post:
  *     summary: Verify a password-reset OTP
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/verify-otp`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -614,10 +658,12 @@ router.post('/verify-otp', AuthController.verifyOTP);
 
 /**
  * @swagger
- * /api/auth/vendor/reset-password:
+ * /auth/vendor/reset-password:
  *   post:
  *     summary: Set a new password using a verified OTP
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/reset-password`
+ *     tags: [Vendor Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -664,10 +710,12 @@ router.post('/reset-password', AuthController.newPassword);
 
 /**
  * @swagger
- * /api/auth/vendor/change-password:
+ * /auth/vendor/change-password:
  *   post:
  *     summary: Change the authenticated vendor's password
- *     tags: [Auth - Vendor]
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/auth/vendor/change-password`
+ *     tags: [Vendor Auth]
  *     security:
  *       - bearerAuth: []
  *     requestBody:

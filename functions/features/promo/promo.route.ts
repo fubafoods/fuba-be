@@ -15,54 +15,71 @@ const router = Router();
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d3"
  *         name:
  *           type: string
+ *           example: Suya Spot
  *         image:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/restaurants/suya-spot.jpg"
  *         state:
  *           type: string
+ *           example: Rivers
  *     Promo:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d4"
  *         image:
  *           type: string
  *           description: URL to the promo image
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/promos/weekend-special.jpg"
  *         category:
  *           type: string
  *           description: Arbitrary grouping/category label
+ *           example: Weekend Special
  *         restaurant:
  *           oneOf:
  *             - type: string
  *               description: Restaurant ObjectId
+ *               example: "64f2a1b3c4d5e6f7a8b9c0d5"
  *             - $ref: '#/components/schemas/PromoRestaurantSummary'
  *         type:
  *           type: string
  *           enum: [freeDelivery, discount, bogo, cashback, other]
+ *           example: discount
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:00:00.000Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-15T08:30:00.000Z"
  *     PromoListMeta:
  *       type: object
  *       properties:
  *         total:
  *           type: integer
+ *           example: 18
  *         offset:
  *           type: integer
+ *           example: 0
  *         limit:
  *           type: integer
+ *           example: 10
  */
 
 /**
  * @swagger
- * /api/promo:
+ * /promo:
  *   post:
  *     summary: Create a promo
- *     description: Creates a promo for a restaurant. Accepts an optional image upload (a URL must be supplied via other means if no file is attached, since image is required).
+ *     description: >
+ *       Creates a promo for a restaurant. Accepts an optional image upload (a URL must be supplied via other means if no file is attached, since image is required).
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/promo`
  *     tags: [Promos]
  *     security:
  *       - bearerAuth: []
@@ -112,7 +129,10 @@ const router = Router();
  *               $ref: '#/components/schemas/ErrorResponse'
  *   get:
  *     summary: List promos
- *     description: Public endpoint to list promos, optionally filtered by category, type and restaurant.
+ *     description: >
+ *       Public endpoint to list promos, optionally filtered by category, type and restaurant.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/promo`
  *     tags: [Promos]
  *     parameters:
  *       - in: query
@@ -163,9 +183,11 @@ router.get("/", PromoController.get);
 
 /**
  * @swagger
- * /api/promo/restaurant/{restaurantId}:
+ * /promo/restaurant/{restaurantId}:
  *   get:
  *     summary: List promos for a restaurant
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/promo/restaurant/{restaurantId}`
  *     tags: [Promos]
  *     parameters:
  *       - in: path
@@ -205,9 +227,11 @@ router.get("/restaurant/:restaurantId", PromoController.getByRestaurant);
 
 /**
  * @swagger
- * /api/promo/{id}:
+ * /promo/{id}:
  *   get:
  *     summary: Get a promo by ID
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/promo/{id}`
  *     tags: [Promos]
  *     parameters:
  *       - in: path
@@ -236,6 +260,8 @@ router.get("/restaurant/:restaurantId", PromoController.getByRestaurant);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   put:
  *     summary: Update a promo
+ *     description: >
+ *       **Full URL:** `PUT https://fuba-be-hbjt.onrender.com/api/promo/{id}`
  *     tags: [Promos]
  *     security:
  *       - bearerAuth: []
@@ -289,7 +315,10 @@ router.get("/restaurant/:restaurantId", PromoController.getByRestaurant);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   delete:
  *     summary: Delete a promo
- *     description: Deletes a promo and its associated image.
+ *     description: >
+ *       Deletes a promo and its associated image.
+ *
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/promo/{id}`
  *     tags: [Promos]
  *     security:
  *       - bearerAuth: []
@@ -332,9 +361,11 @@ router.put("/:id", jwtAuth, PromoController.update);
 
 /**
  * @swagger
- * /api/promo/{id}/image:
+ * /promo/{id}/image:
  *   patch:
  *     summary: Update a promo's image
+ *     description: >
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/promo/{id}/image`
  *     tags: [Promos]
  *     security:
  *       - bearerAuth: []

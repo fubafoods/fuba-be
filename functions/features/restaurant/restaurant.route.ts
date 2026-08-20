@@ -14,66 +14,86 @@ const router = Router();
  *       properties:
  *         freeDelivery:
  *           type: boolean
+ *           example: true
  *         discountPercentage:
  *           type: number
  *           minimum: 0
  *           maximum: 100
+ *           example: 15
  *     RestaurantMapLocation:
  *       type: object
  *       properties:
  *         type:
  *           type: string
  *           enum: [Point]
+ *           example: Point
  *         coordinates:
  *           type: array
  *           items:
  *             type: number
  *           description: "[longitude, latitude]"
+ *           example: [7.0498, 4.8156]
  *     RestaurantMenuItem:
  *       type: object
  *       description: Food item summary as populated on a restaurant's items list
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d1"
  *         name:
  *           type: string
+ *           example: Jollof Rice Special
  *         category:
  *           type: array
  *           items:
  *             type: string
+ *           example: ["Rice", "Nigerian"]
  *         description:
  *           type: string
+ *           example: Smoky party jollof rice served with fried plantain and grilled chicken
  *         price:
  *           type: object
  *           properties:
  *             premium:
  *               type: number
+ *               example: 4500
  *             executive:
  *               type: number
+ *               example: 3500
  *             regular:
  *               type: number
+ *               example: 2500
  *         image:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/items/jollof-rice-special.jpg"
  *     Restaurant:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *           example: "64f2a1b3c4d5e6f7a8b9c0d2"
  *         name:
  *           type: string
+ *           example: The Grill House
  *         image:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/restaurants/grill-house.jpg"
  *         coverImage:
  *           type: string
+ *           example: "https://res.cloudinary.com/fuba/image/upload/v1700000000/restaurants/grill-house-cover.jpg"
  *         street:
  *           type: string
+ *           example: 12 Aba Road, Port Harcourt
  *         state:
  *           type: string
+ *           example: Rivers
  *         isFavorite:
  *           type: boolean
+ *           example: false
  *         mode:
  *           type: string
  *           enum: [delivery, pickup, both]
+ *           example: both
  *         items:
  *           type: array
  *           items:
@@ -81,13 +101,16 @@ const router = Router();
  *         openTime:
  *           type: string
  *           description: "Format HH:mm, e.g. 09:00"
+ *           example: "09:00"
  *         closeTime:
  *           type: string
  *           description: "Format HH:mm, e.g. 22:00"
+ *           example: "22:00"
  *         ratings:
  *           type: number
  *           minimum: 0
  *           maximum: 5
+ *           example: 4.5
  *         mapLocation:
  *           $ref: '#/components/schemas/RestaurantMapLocation'
  *         promo:
@@ -95,29 +118,38 @@ const router = Router();
  *         distanceKm:
  *           type: number
  *           description: Distance from the requested mapLocation, in kilometers (only present when the mapLocation query parameter is used)
+ *           example: 3.2
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-01T10:00:00.000Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2026-06-15T08:30:00.000Z"
  *     RestaurantListMeta:
  *       type: object
  *       properties:
  *         total:
  *           type: integer
+ *           example: 42
  *         offset:
  *           type: integer
+ *           example: 0
  *         limit:
  *           type: integer
+ *           example: 10
  */
 
 /**
  * @swagger
- * /api/restaurant:
+ * /restaurant:
  *   post:
  *     summary: Create a restaurant
- *     description: Creates a restaurant. Accepts an optional image upload.
+ *     description: >
+ *       Creates a restaurant. Accepts an optional image upload.
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/restaurant`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -180,7 +212,10 @@ const router = Router();
  *               $ref: '#/components/schemas/ErrorResponse'
  *   get:
  *     summary: List restaurants
- *     description: Retrieves restaurants with optional search, promo, favorite and map-location filters, with pagination.
+ *     description: >
+ *       Retrieves restaurants with optional search, promo, favorite and map-location filters, with pagination.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/restaurant`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -244,10 +279,13 @@ router.get("/", jwtAuth, RestaurantController.get);
 
 /**
  * @swagger
- * /api/restaurant/promos/active:
+ * /restaurant/promos/active:
  *   get:
  *     summary: List restaurants with active promotions
- *     description: Retrieves restaurants that currently offer free delivery.
+ *     description: >
+ *       Retrieves restaurants that currently offer free delivery.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/restaurant/promos/active`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -290,10 +328,13 @@ router.get("/promos/active", jwtAuth, RestaurantController.getWithPromos);
 
 /**
  * @swagger
- * /api/restaurant/mode/{mode}:
+ * /restaurant/mode/{mode}:
  *   get:
  *     summary: List restaurants by mode
- *     description: Retrieves restaurants filtered by service mode.
+ *     description: >
+ *       Retrieves restaurants filtered by service mode.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/restaurant/mode/{mode}`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -348,9 +389,11 @@ router.get("/mode/:mode", jwtAuth, RestaurantController.getByMode);
 
 /**
  * @swagger
- * /api/restaurant/state/{state}:
+ * /restaurant/state/{state}:
  *   get:
  *     summary: List restaurants by state
+ *     description: >
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/restaurant/state/{state}`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -398,10 +441,13 @@ router.get("/state/:state", jwtAuth, RestaurantController.getByState);
 
 /**
  * @swagger
- * /api/restaurant/{id}:
+ * /restaurant/{id}:
  *   get:
  *     summary: Get a restaurant by ID
- *     description: Retrieves a restaurant, optionally filtering its items by search and applying promo/map-location filters.
+ *     description: >
+ *       Retrieves a restaurant, optionally filtering its items by search and applying promo/map-location filters.
+ *
+ *       **Full URL:** `GET https://fuba-be-hbjt.onrender.com/api/restaurant/{id}`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -453,6 +499,8 @@ router.get("/state/:state", jwtAuth, RestaurantController.getByState);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   put:
  *     summary: Update a restaurant
+ *     description: >
+ *       **Full URL:** `PUT https://fuba-be-hbjt.onrender.com/api/restaurant/{id}`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -513,7 +561,10 @@ router.get("/state/:state", jwtAuth, RestaurantController.getByState);
  *               $ref: '#/components/schemas/ErrorResponse'
  *   delete:
  *     summary: Delete a restaurant
- *     description: Deletes a restaurant and its associated image.
+ *     description: >
+ *       Deletes a restaurant and its associated image.
+ *
+ *       **Full URL:** `DELETE https://fuba-be-hbjt.onrender.com/api/restaurant/{id}`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -556,9 +607,11 @@ router.put("/:id", jwtAuth, RestaurantController.update);
 
 /**
  * @swagger
- * /api/restaurant/{id}/image:
+ * /restaurant/{id}/image:
  *   patch:
  *     summary: Update a restaurant's image
+ *     description: >
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/restaurant/{id}/image`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -618,9 +671,11 @@ router.patch("/:id/image", jwtAuth, uploadImage.single("image"), RestaurantContr
 
 /**
  * @swagger
- * /api/restaurant/{id}/rating:
+ * /restaurant/{id}/rating:
  *   patch:
  *     summary: Update a restaurant's rating
+ *     description: >
+ *       **Full URL:** `PATCH https://fuba-be-hbjt.onrender.com/api/restaurant/{id}/rating`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -681,13 +736,15 @@ router.patch("/:id/rating", jwtAuth, RestaurantController.updateRating);
 
 /**
  * @swagger
- * /api/restaurant/items/add:
+ * /restaurant/items/add:
  *   post:
  *     summary: Add an item to a restaurant
  *     description: >
  *       Links an existing food item to a restaurant when `itemId` is provided, or creates a new
  *       food item from the given payload (optionally with an image) and links it. Provide either
  *       `itemId`, or an `item` object / top-level item fields (name, description, category, price).
+ *
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/restaurant/items/add`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -776,9 +833,11 @@ router.post("/items/add", jwtAuth, uploadImage.single("image"), RestaurantContro
 
 /**
  * @swagger
- * /api/restaurant/items/remove:
+ * /restaurant/items/remove:
  *   post:
  *     summary: Remove an item from a restaurant
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/restaurant/items/remove`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
@@ -835,9 +894,11 @@ router.delete("/:id", jwtAuth, RestaurantController.delete);
 
 /**
  * @swagger
- * /api/restaurant/{id}/favorite:
+ * /restaurant/{id}/favorite:
  *   post:
  *     summary: Toggle favorite status for a restaurant
+ *     description: >
+ *       **Full URL:** `POST https://fuba-be-hbjt.onrender.com/api/restaurant/{id}/favorite`
  *     tags: [Restaurants]
  *     security:
  *       - bearerAuth: []
