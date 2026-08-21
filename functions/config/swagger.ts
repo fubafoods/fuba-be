@@ -8,7 +8,13 @@ const options: swaggerJSDoc.Options = {
     info: {
       title: 'Fuba API',
       version: '1.0.0',
-      description: 'API documentation for the Fuba backend (auth, users, vendors, restaurants, meals, orders, cart, promos and file uploads).',
+      description: `Fuba Food Delivery & Vendor Marketplace Backend API.
+
+**Base URL**: \`/api\`
+**Authentication**: Bearer JWT (\`Authorization: Bearer <token>\`)
+**Roles**: \`consumer\`, \`vendor\`, \`luxury_restaurant\`, \`admin\`
+
+API documentation for the Fuba backend (auth, users, vendors, restaurants, meals, orders, cart, promos and file uploads).`,
     },
     servers: [
       { url: 'https://fuba-be-hbjt.onrender.com/api', description: 'Production (Render)' },

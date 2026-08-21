@@ -50,7 +50,19 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customSiteTitle: 'Fuba API Docs',
+    swaggerOptions: {
+      filter: true,
+      persistAuthorization: true,
+      displayRequestDuration: true,
+      docExpansion: 'list',
+    },
+  })
+);
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
